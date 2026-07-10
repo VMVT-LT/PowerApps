@@ -9,11 +9,13 @@ Console.Clear();
 
 var cfg = new Configuration().Data;
 
-Conn.Export = new(cfg.ConnExport) { Debug=cfg.Debug };
+Conn.Export = new(cfg.ConnExport) { Debug = cfg.Debug };
+Conn.G9 = new(cfg.ConnG9) { Debug = cfg.Debug };
 
 Startup.Routes();
 
 ExportAPI.ApiKeys = cfg.ExportKeys;
+G9API.ApiKeys = cfg.G9Keys;
 
 var app = Startup.Build(args);
 app.UseForwardedHeaders();

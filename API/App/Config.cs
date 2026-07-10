@@ -15,8 +15,13 @@ namespace PowerApps.App {
 
 			/// <summary>Export duomenų bazės prisijungimo tekstas</summary>
 			public string ConnExport { get; set; } = "";
+			/// <summary>G9 duomenų bazės prisijungimo tekstas</summary>
+			public string ConnG9 { get; set; } = "";
+
 			/// <summary>Export prieigos raktas</summary>
 			public List<string> ExportKeys { get; set; } = [""];
+			/// <summary>Export prieigos raktas</summary>
+			public List<string> G9Keys { get; set; } = [""];
 
 			/// <summary>Spausdinti klaidas konsolėje</summary>
 			public bool PrintOutput { get; set; } = true;

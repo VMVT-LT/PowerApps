@@ -1,8 +1,8 @@
-﻿namespace PowerApps.Modules.Export;
+﻿
 
+namespace PowerApps.Shared.DataList;
 
-
-/// <summary>Sertifikato sąrašo užklausa</summary>
+/// <summary>Sąrašo užklausa</summary>
 public class ListQuery<T> {
 	/// <summary>Puslapis</summary>
 	/// <example>1</example>

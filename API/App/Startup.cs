@@ -35,6 +35,7 @@ public static class Startup {
 							routes.Add(definition);
 					}
 		Endpoints.AddRange(routes.OrderBy(x => x.Tag));
+
 	}
 
 	/// <summary>Build minimal API app</summary>
