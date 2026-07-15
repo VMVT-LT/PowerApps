@@ -1,26 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
-using PowerApps.Modules.Export.Methods;
+﻿using PowerApps.Modules.Export.Methods;
 using PowerApps.Modules.Export.Models;
 using Vmvt.RouteAPI;
 
 namespace PowerApps.Modules;
 
 /// <summary>Registro inicijavimas</summary>
-public static class ExportAPI {
+public class ExportAPI {
 	/// <summary>API prieigos raktai</summary>
 	public static List<string> ApiKeys { get; set; } = [];
 
 
-	/// <summary>Gauti užklausos teises</summary>
-	/// <param name="ctx"></param>
-	/// <returns></returns>
-	public static bool CheckApi(this HttpContext ctx) =>
-		ctx.Request.Headers.TryGetValue("X-API-Key", out var k) && !string.IsNullOrWhiteSpace(k) && ApiKeys.Contains(k.ToString());
-
-
 	/// <summary>Export maršrutų priskyrimas</summary>
 	/// <returns></returns>
-
 	public static RouteDefinition Route() => new("Export") {
 		Description = "Export-app duomenų integracija",
 		Tag = "export", Version = "v1",

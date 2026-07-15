@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 namespace PowerApps.Modules.Export;
+
+
+
+/// <summary>Plėtiniai</summary>
 public static class Extensions {
 
 
