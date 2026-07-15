@@ -9,10 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Vmvt.Npgsql" Version="0.1.6" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\Routing\Routing.csproj" />
 	</ItemGroup>
 

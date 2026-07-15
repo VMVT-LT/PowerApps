@@ -3,6 +3,9 @@
 using Microsoft.AspNetCore.Http;
 
 namespace PowerApps.Modules.G9;
+
+
+/// <summary>Plėtiniai</summary>
 public static class Extensions {
 
 

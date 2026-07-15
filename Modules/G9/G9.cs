@@ -20,11 +20,26 @@ public class G9API {
 				.Map(new("/api/g9/deklaracija", Deklar.Get) {
 					Description = "Deklaracijos duomenų gavimas pagal identifikacinį numerį", Response=typeof(Deklaracija), Code = "GetDeklar",
 					Params = [
-						new("id"){ Description="Įrašo identifikacinis numeris", Type=RouteParamType.Integer, Required=true },
+						new("dkl"){ Description="Deklaracijos ID", Type=RouteParamType.Integer, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true }
 						],
 				})
-			],
+				.Map(new("/api/g9/deklaracija/rodikliai", Deklar.GetRod) {
+					Description = "Deklaracijos rodiklių sąrašas", Response = typeof(List<DklRodiklis>), Code = "GetDeklarRod",
+					Params = [
+						new("dkl"){ Description="Deklaracijos ID", Type=RouteParamType.Integer, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true }
+						],
+				})
+				.Map(new("/api/g9/deklaracija/reiksmes", Deklar.GetReiksm) {
+					Description = "Deklaracijos reikšmių sąrašas", Response = typeof(List<DklRodiklis>), Code = "GetDeklarReiksm",
+					Params = [
+						new("dkl"){ Description="Deklaracijos ID", Type=RouteParamType.Integer, Required=true },
+						new("rod"){ Description="Rodiklio ID", Type=RouteParamType.Integer, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true }
+						],
+				})
+			]
 	};
 }
 
