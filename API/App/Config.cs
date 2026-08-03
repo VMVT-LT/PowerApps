@@ -1,4 +1,5 @@
 ﻿using PowerApps.App.Config;
+using PowerApps.Shared;
 using System.Text.Json;
 
 namespace PowerApps.App { 
@@ -7,6 +8,7 @@ namespace PowerApps.App {
 	public class Configuration : Config<ConfigData> {
 	
 	}
+
 	namespace Config {
 		/// <summary>Konfigūracijos duomenų modelis</summary>
 		public class ConfigData {
@@ -22,6 +24,9 @@ namespace PowerApps.App {
 			public List<string> ExportKeys { get; set; } = [""];
 			/// <summary>Export prieigos raktas</summary>
 			public List<string> G9Keys { get; set; } = [""];
+
+			/// <summary>Registrų konfigūracija</summary>
+			public CfgRegistrai Registrai { get; set; } = new();
 
 			/// <summary>Spausdinti klaidas konsolėje</summary>
 			public bool PrintOutput { get; set; } = true;

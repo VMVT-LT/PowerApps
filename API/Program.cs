@@ -16,6 +16,7 @@ Startup.Routes();
 
 ExportAPI.ApiKeys = cfg.ExportKeys;
 G9API.ApiKeys = cfg.G9Keys;
+G9API.Cfg = cfg.Registrai;
 
 var app = Startup.Build(args);
 app.UseForwardedHeaders();
