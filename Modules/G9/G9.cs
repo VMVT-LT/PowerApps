@@ -67,18 +67,62 @@ public class G9API {
 						new("top") { Description="Grąžinamų įrašų skaičius", Type=RouteParamType.Integer, Default="10"  }
 					]
 				}),
+			new RouteGroup("GVTS")
+				.Map(new("/api/g9/gvts",Gvts.Info){
+					Description = "Geriamojo vandens tiekimo sistemos informacija", Response = typeof(List<ARList>), Code = "Gvts_GetInfo",
+					Params = [
+						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				})
+				.Map(new("/api/g9/gvts/list",Gvts.List){
+					Description = "Geriamojo vandens tiekimo sistemų sąrašas", Response = typeof(List<ARList>), Code = "Gvts_GetList",
+					Params = [
+						new("apg") { Description="Apygardos id", Type=RouteParamType.Integer },
+						new("sav") { Description="Savivaldybės id", Type=RouteParamType.Integer },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				}),
 			new RouteGroup("Juridiniai asmenys")
+				.Map(new("/api/g9/jar",Jar.Info){
+					Description = "G9 juridinio asmens detalės", Response = typeof(List<JARDetails>), Code = "JAR_GetInfo",
+					Params = [
+						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				})
+				.Map(new("/api/g9/jar",Jar.InfoSet, Method.Post){
+					Description = "G9 juridinio asmens detalių keitimas", Response = typeof(JARDtlSet), Code = "JAR_SetInfo",
+					Params = [
+						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
+						new("u") { Description="Vartotojas", Type=RouteParamType.String, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				})
+				.Map(new("/api/g9/jar/list",Jar.List){
+					Description = "G9 juridinių asmenų sąrašas", Response = typeof(List<JARDetails>), Code = "JAR_List",
+					Params = [
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				})
 				.Map(new("/api/g9/jar/find",Jar.Find){
-					Description = "Juridinio asmens paieška", Response = typeof(List<JARFind>), Code = "JAR_Find",
+					Description = "Juridinio asmens paieška (RC)", Response = typeof(List<JARFind>), Code = "JAR_Find",
 					Params = [
 						new("q") { Description="Paieškos tekstas", Type=RouteParamType.String, Required=true },
 						new("top") { Description="Grąžinamų įrašų skaičius", Type=RouteParamType.Integer, Default="10" }
 					]
 				})
 				.Map(new("/api/g9/jar/details",Jar.Details){
-					Description = "Juridinio asmens informacija", Response = typeof(JARItem), Code = "JAR_Details",
+					Description = "Juridinio asmens informacija (RC)", Response = typeof(JARItem), Code = "JAR_Details",
 					Params = [
 						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true }
+					]
+				}),
+			new RouteGroup("Administravimas")
+				.Map(new ("/api/g9/admin/jar",Jar.AdmUpdateJar,Method.Post){
+					Description = "Juridinių asmenų informacijos atnaujinimas iš registrų centro", Response = typeof(string), Code = "Adm_JARUpdate",
+					Params = [
+						new ("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					]
 				})
 			]

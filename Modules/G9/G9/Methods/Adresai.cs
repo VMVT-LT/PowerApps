@@ -64,4 +64,12 @@ public static class Adr {
 		}
 		else await ctx.Response.E400("Klaida gaunant adresus");
 	}
+
+	/// <summary>Gauti adreso detales</summary>
+	/// <param name="id">Adreso AOB kodas</param><returns></returns>
+	public static async Task<ARDetales?> GetAdr(long id) {
+		using var response = await HClient.GetAsync($"{G9API.Cfg.ARDetails}?id={id}&details=true");
+		if (response.IsSuccessStatusCode) return await response.Content.ReadFromJsonAsync<ARDetales>();
+		return null;
+	}
 }

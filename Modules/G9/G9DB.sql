@@ -1,6 +1,6 @@
 
 
-CREATE OR REPLACE VIEW g9.v_api_deklar AS
+CREATE VIEW g9.v_api_deklar AS
 WITH medz as (SELECT lkp_num, lkp_value FROM g9.lookup WHERE lkp_group='RuosimoMedziagos'),
 	buds as (SELECT lkp_num, lkp_value FROM g9.lookup WHERE lkp_group='RuosimoBudai'),
 	stat as (SELECT lkp_num, lkp_value FROM g9.lookup WHERE lkp_group='Statusas'),
@@ -18,7 +18,17 @@ FROM g9.deklaravimas d LEFT JOIN stat on (d.dkl_status=stat.lkp_num) LEFT JOIN s
 
 CREATE VIEW g9.v_api_deklar_reiksmes AS SELECT rks_id "ID", rks_deklar "Deklar", rks_rodiklis "Rodiklis", rks_date "Data", rks_reiksme "Reiksme", rks_suvedimas "Suvedimas", rks_maziau "Maziau", rks_protokolas "Protokolas" FROM g9.reiksmes 
 
+CREATE OR REPLACE VIEW g9.v_api_ja AS
+SELECT ja_id as id, ja_pavadinimas as pavad, ja_tipas as tipas, ja_statusas as statusas, 
+	jsonb_build_object('aob', ja_aob, 'pavad', jad_adresas, 'kita', jad_aob) as adresas,
+	CASE WHEN COALESCE(jad_kontaktas_vardas,jad_kontaktas_email,jad_kontaktas_phone) is null THEN NULL ELSE
+		jsonb_build_object('vardas', jad_kontaktas_vardas, 'pavarde', jad_kontaktas_pavarde, 'email', jad_kontaktas_email, 'phone', jad_kontaktas_phone) end as kontaktas,
+	jad_update pakeista
+FROM g9.ja_detales WHERE jad_active;
 
+CREATE OR REPLACE VIEW g9.v_api_gvts AS
+SELECT vkl_id id, vkl_ja ja, vkl_title pavad, vkl_gvtot gvtot, jsonb_build_object('aob', vkl_adr_aob, 'pavad', vkl_adresas, 'apg', vkl_adr_apg, 'sav', vkl_adr_sav) adresas,
+	vkl_active active, vkl_date pakeista FROM g9.gvts;
 
 CREATE OR REPLACE FUNCTION g9.valid_suvesti_detales(dekl INT) RETURNS TABLE (rod_id INT, rod_kodas VARCHAR, rod_grupe VARCHAR, rod_rodiklis VARCHAR, rod_virsija INT, rod_reikia INT, rod_suvesta INT) 
 LANGUAGE plpgsql AS $$ BEGIN RETURN QUERY
