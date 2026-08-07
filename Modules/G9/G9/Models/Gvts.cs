@@ -17,4 +17,13 @@ public class GvtsAdr {
 	public long? Aob { get; set; }
 	public string? Pavad { get; set; }
 	public long? Sav { get; set; }
+	public long? Apg { get; set; }
+}
+
+
+public class GvtsDtlSet {
+	public long? JA { get; set; }
+	public string? Pavad { get; set; }
+	public string? GVTOT { get; set; }
+	public long? Adresas { get; set; }
 }

@@ -28,7 +28,7 @@ FROM g9.ja_detales WHERE jad_active;
 
 CREATE OR REPLACE VIEW g9.v_api_gvts AS
 SELECT vkl_id id, vkl_ja ja, vkl_title pavad, vkl_gvtot gvtot, jsonb_build_object('aob', vkl_adr_aob, 'pavad', vkl_adresas, 'apg', vkl_adr_apg, 'sav', vkl_adr_sav) adresas,
-	vkl_active active, vkl_date pakeista FROM g9.gvts;
+	vkl_active active, vkl_date pakeista, vkl_adr_apg apg, vkl_adr_sav sav FROM g9.gvts;
 
 CREATE OR REPLACE FUNCTION g9.valid_suvesti_detales(dekl INT) RETURNS TABLE (rod_id INT, rod_kodas VARCHAR, rod_grupe VARCHAR, rod_rodiklis VARCHAR, rod_virsija INT, rod_reikia INT, rod_suvesta INT) 
 LANGUAGE plpgsql AS $$ BEGIN RETURN QUERY

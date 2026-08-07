@@ -69,14 +69,22 @@ public class G9API {
 				}),
 			new RouteGroup("GVTS")
 				.Map(new("/api/g9/gvts",Gvts.Info){
-					Description = "Geriamojo vandens tiekimo sistemos informacija", Response = typeof(List<ARList>), Code = "Gvts_GetInfo",
+					Description = "Geriamojo vandens tiekimo sistemos informacija", Response = typeof(GvtsDetails), Code = "Gvts_GetInfo",
 					Params = [
 						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					]
 				})
+				.Map(new("/api/g9/gvts",Gvts.InfoSet,Method.Post){
+					Description = "Geriamojo vandens tiekimo sistemos informacijos keitimas", Response = typeof(GvtsDetails), Code = "Gvts_SetInfo",
+					Params = [
+						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
+						new("usr") { Description="Vartotojas", Type=RouteParamType.String, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				})
 				.Map(new("/api/g9/gvts/list",Gvts.List){
-					Description = "Geriamojo vandens tiekimo sistemų sąrašas", Response = typeof(List<ARList>), Code = "Gvts_GetList",
+					Description = "Geriamojo vandens tiekimo sistemų sąrašas", Response = typeof(List<GvtsDetails>), Code = "Gvts_GetList",
 					Params = [
 						new("apg") { Description="Apygardos id", Type=RouteParamType.Integer },
 						new("sav") { Description="Savivaldybės id", Type=RouteParamType.Integer },
@@ -95,7 +103,7 @@ public class G9API {
 					Description = "G9 juridinio asmens detalių keitimas", Response = typeof(JARDtlSet), Code = "JAR_SetInfo",
 					Params = [
 						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
-						new("u") { Description="Vartotojas", Type=RouteParamType.String, Required=true },
+						new("usr") { Description="Vartotojas", Type=RouteParamType.String, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					]
 				})
