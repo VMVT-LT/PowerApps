@@ -30,6 +30,8 @@ public class JARItem {
 	public string? Forma { get; set; }
 	/// <summary>Juridinio asmens statusas</summary>
 	public string? Statusas { get; set; }
+	/// <summary>Juridinio asmens statusas</summary>
+	public int? StatusKodas { get; set; }
 	/// <summary>Registracijos data</summary>
 	public DateOnly? RegData { get; set; }
 	/// <summary>Išregistravimo data</summary>

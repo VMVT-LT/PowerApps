@@ -88,6 +88,7 @@ public class G9API {
 					Params = [
 						new("apg") { Description="Apygardos id", Type=RouteParamType.Integer },
 						new("sav") { Description="Savivaldybės id", Type=RouteParamType.Integer },
+						new("inact") { Description="Rodyti neaktyvius GVTS", Type=RouteParamType.Boolean, Default="false" },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					]
 				}),
