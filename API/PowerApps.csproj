@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Vmvt.Npgsql" Version="0.1.9-beta.28" />
+	  <PackageReference Include="Vmvt.Npgsql" Version="0.1.9-beta.29" />
 	</ItemGroup>
 
 	<ItemGroup>

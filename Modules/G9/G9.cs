@@ -69,28 +69,44 @@ public class G9API {
 				}),
 			new RouteGroup("GVTS")
 				.Map(new("/api/g9/gvts",Gvts.Info){
-					Description = "Geriamojo vandens tiekimo sistemos informacija", Response = typeof(GvtsDetails), Code = "Gvts_GetInfo",
+					Description = "Geriamojo vandens tiekimo sistemos informacija", Response = typeof(GvtsItem), Code = "Gvts_GetInfo",
 					Params = [
 						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
-					]
+					], Errors=[404]
 				})
 				.Map(new("/api/g9/gvts",Gvts.InfoSet,Method.Post){
-					Description = "Geriamojo vandens tiekimo sistemos informacijos keitimas", Response = typeof(GvtsDetails), Code = "Gvts_SetInfo",
+					Description = "Geriamojo vandens tiekimo sistemos informacijos keitimas", Response = typeof(GvtsItem), Code = "Gvts_SetInfo",
 					Params = [
 						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
 						new("usr") { Description="Vartotojas", Type=RouteParamType.String, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
-					]
+					], Errors=[400]
 				})
 				.Map(new("/api/g9/gvts/list",Gvts.List){
-					Description = "Geriamojo vandens tiekimo sistemų sąrašas", Response = typeof(List<GvtsDetails>), Code = "Gvts_GetList",
+					Description = "Geriamojo vandens tiekimo sistemų sąrašas", Response = typeof(GvtsList), Code = "Gvts_GetList",
 					Params = [
 						new("apg") { Description="Apygardos id", Type=RouteParamType.Integer },
 						new("sav") { Description="Savivaldybės id", Type=RouteParamType.Integer },
 						new("inact") { Description="Rodyti neaktyvius GVTS", Type=RouteParamType.Boolean, Default="false" },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
-					]
+					], Errors=[401]
+				})
+				.Map(new("/api/g9/gvts/user",Gvts.UserAdd,Method.Post){
+					Description = "Inspektoriaus priskyrimas geriamojo vandens tiekimo sistemai", Response = typeof(DefaultResponse), Code = "Gvts_AddUser",
+					Params = [
+						new("usr") { Description="Vartotojo id", Type=RouteParamType.String, Required=true },
+						new("gvts") { Description="GVTS id", Type=RouteParamType.Number, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					], Errors = [400]
+				})
+				.Map(new("/api/g9/gvts/user",Gvts.UserRem,Method.Delete){
+					Description = "Inspektoriaus pašalinimas geriamojo vandens tiekimo sistemai", Response = typeof(DefaultResponse), Code = "Gvts_RemUser",
+					Params = [
+						new("usr") { Description="Vartotojo id", Type=RouteParamType.String, Required=true },
+						new("gvts") { Description="GVTS id", Type=RouteParamType.Number, Required=true },
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					], Errors = [400]
 				}),
 			new RouteGroup("Juridiniai asmenys")
 				.Map(new("/api/g9/jar",Jar.Info){
@@ -127,9 +143,18 @@ public class G9API {
 						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true }
 					]
 				}),
+			new RouteGroup("Vartotojai")
+				.Map(new("/api/g9/users",Users.List){ 
+					Description = "Vartotojų sąrašas", Response = typeof(List<User>), Code = "Usr_List",
+					Params = [
+						new ("apg") { Description="Apygardos id", Type=RouteParamType.Integer },
+						new ("inact") { Description="Rodyti neaktyvius", Type=RouteParamType.Boolean },
+						new ("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				}),
 			new RouteGroup("Administravimas")
 				.Map(new ("/api/g9/admin/jar",Jar.AdmUpdateJar,Method.Post){
-					Description = "Juridinių asmenų informacijos atnaujinimas iš registrų centro", Response = typeof(string), Code = "Adm_JARUpdate",
+					Description = "Juridinių asmenų informacijos atnaujinimas iš registrų centro", Response = typeof(DefaultResponse), Code = "Adm_JARUpdate",
 					Params = [
 						new ("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					]

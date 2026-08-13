@@ -33,9 +33,7 @@ public static class Jar {
 		if (ctx.CheckApi()) {
 			var id = ctx.ParamLongN("id");
 			if (id is not null) {
-				var sql = $"SELECT * FROM g9.v_api_ja WHERE id=@id;";
-				using var db = new DBRead(sql, Conn.G9, ("@id", id));
-				var ret = await db.GetObject<JARDetails>();
+				var ret = await JarInfo(id.Value);
 				if (ret is not null) await ctx.Response.WriteAsJsonAsync(ret);
 				else await ctx.Response.E404();
 			}
@@ -43,6 +41,16 @@ public static class Jar {
 		}
 		else await ctx.Response.E401();
 	}
+
+	/// <summary>Gauti juridinio asmens detales</summary>
+	/// <param name="id">Juridinio asmens id</param>
+	/// <returns></returns>
+	public static async Task<JARDetails?> JarInfo(long id) {
+		using var db = new DBRead("SELECT * FROM g9.v_api_ja WHERE id=@id;", Conn.G9, ("@id", id));
+		return await db.GetObject<JARDetails>();
+	}
+
+
 
 	/// <summary>G9 Juridinio asmens detalių keitimas</summary>
 	/// <param name="ctx"></param><returns></returns>
@@ -69,8 +77,7 @@ public static class Jar {
 						await Conn.G9!.Execute(sql, ("@id", id), ("@pavad", ja.Pavad), ("@tipas", ja.Forma), ("@status", ja.Statusas), ("@jaob", ja.AobKodas), ("@vardas", dt.Kontaktas?.Vardas), ("@pavard", dt.Kontaktas?.Pavarde),
 							("@email", dt.Kontaktas?.Email), ("@phone", dt.Kontaktas?.Phone), ("@aob", dt.Aob), ("@adr", adpav), ("@apg", adr.Apg?.ID), ("@sav", adr.Sav?.ID));
 
-						using var db = new DBRead("SELECT * FROM g9.v_api_ja WHERE id=@id;", Conn.G9, ("@id", id));
-						var ret = await db.GetObject<JARDetails>();
+						var ret = await JarInfo(id.Value);
 						if (ret is not null) await ctx.Response.WriteAsJsonAsync(ret);
 						else await ctx.Response.E404();
 					}
@@ -123,7 +130,7 @@ public static class Jar {
 	/// <param name="ctx"></param><returns></returns>
 	public static async Task AdmUpdateJar(HttpContext ctx) {
 		await UpdateJar();
-		await ctx.Response.WriteAsync("Ok");
+		await ctx.Response.Ok();
 	}
 
 	/// <summary>Juridinių asmenų informacijos atnaujinimas</summary>
@@ -147,7 +154,6 @@ public static class Jar {
 				if (jar.AobKodas > 0) {
 					caob = rdr.GetLongN(2);
 					if (caob > 0 && rdr.GetDateOnlyN(4) < jar.AobData) caob = null;
-
 				}
 				if (jar.Statusas == "Teisinis statusas neįregistruotas") jar.Statusas = null;
 

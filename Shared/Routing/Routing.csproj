@@ -10,10 +10,10 @@
 
 
 	<ItemGroup Condition="'$(Configuration)'=='Debug'">
-		<PackageReference Include="Vmvt.RouteAPI.Swagger" Version="0.1.3" />
+		<PackageReference Include="Vmvt.RouteAPI.Swagger" Version="0.1.4-beta.20" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(Configuration)'=='Release'">
-		<PackageReference Include="Vmvt.RouteAPI" Version="0.1.3" />
+		<PackageReference Include="Vmvt.RouteAPI" Version="0.1.4-beta.20" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Vmvt.Npgsql" Version="0.1.8" />
