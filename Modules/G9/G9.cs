@@ -20,27 +20,49 @@ public class G9API {
 		Tag = "g9", Version = "v1",
 		Routes = [
 			new RouteGroup("Deklaracijos duomenų gavimas")
-				.Map(new("/api/g9/deklaracija", Deklar.Get) {
+				.Map(new("/api/g9/deklaracija", Deklar.Get) { Deprecated=true,
 					Description = "Deklaracijos duomenų gavimas pagal identifikacinį numerį", Response=typeof(Deklaracija), Code = "Dkl_Get",
 					Params = [
 						new("dkl"){ Description="Deklaracijos ID", Type=RouteParamType.Integer, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true }
 						],
 				})
-				.Map(new("/api/g9/deklaracija/rodikliai", Deklar.GetRod) {
+				.Map(new("/api/g9/deklaracija/rodikliai", Deklar.GetRod) { Deprecated=true,
 					Description = "Deklaracijos rodiklių sąrašas", Response = typeof(List<DklRodiklis>), Code = "Dkl_GetRod",
 					Params = [
 						new("dkl"){ Description="Deklaracijos ID", Type=RouteParamType.Integer, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true }
 						],
 				})
-				.Map(new("/api/g9/deklaracija/reiksmes", Deklar.GetReiksm) {
+				.Map(new("/api/g9/deklaracija/reiksmes", Deklar.GetReiksm) { Deprecated=true,
 					Description = "Deklaracijos reikšmių sąrašas", Response = typeof(List<DklRodiklis>), Code = "Dkl_GetReiksm",
 					Params = [
 						new("dkl"){ Description="Deklaracijos ID", Type=RouteParamType.Integer, Required=true },
 						new("rod"){ Description="Rodiklio ID", Type=RouteParamType.Integer, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true }
 						],
+				}),
+			new RouteGroup("Rodikliai")
+				.Map(new("/api/g9/rodikliai/list",Rodikliai.List){
+					Description = "Visų rodiklių sąrašas", Response=typeof(List<Rodiklis>), Code = "Rod_List",
+					Params = [
+						new ("g") { Description="Rodiklių grupės id", Type=RouteParamType.Integer },
+						new ("inact") { Description="Rodyti neaktyvius", Type=RouteParamType.Boolean },
+						new ("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					], Errors=[404]
+				})
+				.Map(new("/api/g9/rodikliai/{id}",Rodikliai.Info){
+					Description = "Rodiklio informacija", Response=typeof(Rodiklis), Code = "Rod_GetInfo",
+					Params = [
+						new ("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					], Errors=[400]
+				})
+				.Map(new("/api/g9/rodikliai/{id}",Rodikliai.SetInfo, Method.Post){
+					Description = "Keisti rodiklio informaciją", Response=typeof(Rodiklis), Code = "Rod_SetInfo",
+					Params = [
+						new ("id") { Description="Rodiklio id", Type=RouteParamType.Integer },
+						new ("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					], Errors=[400]
 				}),
 			new RouteGroup("Adresai")
 				.Map(new("/api/g9/ar/list",Adr.List){
@@ -68,18 +90,15 @@ public class G9API {
 					]
 				}),
 			new RouteGroup("GVTS")
-				.Map(new("/api/g9/gvts",Gvts.Info){
+				.Map(new("/api/g9/gvts/{id}",Gvts.Info){
 					Description = "Geriamojo vandens tiekimo sistemos informacija", Response = typeof(GvtsItem), Code = "Gvts_GetInfo",
 					Params = [
-						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					], Errors=[404]
 				})
-				.Map(new("/api/g9/gvts",Gvts.InfoSet,Method.Post){
+				.Map(new("/api/g9/gvts/{id}",Gvts.InfoSet,Method.Post){
 					Description = "Geriamojo vandens tiekimo sistemos informacijos keitimas", Response = typeof(GvtsItem), Code = "Gvts_SetInfo",
 					Params = [
-						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
-						new("usr") { Description="Vartotojas", Type=RouteParamType.String, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					], Errors=[400]
 				})
@@ -92,40 +111,35 @@ public class G9API {
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					], Errors=[401]
 				})
-				.Map(new("/api/g9/gvts/user",Gvts.UserAdd,Method.Post){
+				.Map(new("/api/g9/gvts/{id}/user",Gvts.UserAdd,Method.Post){
 					Description = "Inspektoriaus priskyrimas geriamojo vandens tiekimo sistemai", Response = typeof(DefaultResponse), Code = "Gvts_AddUser",
 					Params = [
 						new("usr") { Description="Vartotojo id", Type=RouteParamType.String, Required=true },
-						new("gvts") { Description="GVTS id", Type=RouteParamType.Number, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					], Errors = [400]
 				})
-				.Map(new("/api/g9/gvts/user",Gvts.UserRem,Method.Delete){
+				.Map(new("/api/g9/gvts/{id}/user",Gvts.UserRem,Method.Delete){
 					Description = "Inspektoriaus pašalinimas geriamojo vandens tiekimo sistemai", Response = typeof(DefaultResponse), Code = "Gvts_RemUser",
 					Params = [
 						new("usr") { Description="Vartotojo id", Type=RouteParamType.String, Required=true },
-						new("gvts") { Description="GVTS id", Type=RouteParamType.Number, Required=true },
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					], Errors = [400]
 				}),
 			new RouteGroup("Juridiniai asmenys")
-				.Map(new("/api/g9/jar",Jar.Info){
-					Description = "G9 juridinio asmens detalės", Response = typeof(List<JARDetails>), Code = "JAR_GetInfo",
-					Params = [
-						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
-						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
-					]
-				})
-				.Map(new("/api/g9/jar",Jar.InfoSet, Method.Post){
-					Description = "G9 juridinio asmens detalių keitimas", Response = typeof(JARDtlSet), Code = "JAR_SetInfo",
-					Params = [
-						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true },
-						new("usr") { Description="Vartotojas", Type=RouteParamType.String, Required=true },
-						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
-					]
-				})
 				.Map(new("/api/g9/jar/list",Jar.List){
 					Description = "G9 juridinių asmenų sąrašas", Response = typeof(List<JARDetails>), Code = "JAR_List",
+					Params = [
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				})
+				.Map(new("/api/g9/jar/{id}",Jar.Info){
+					Description = "G9 juridinio asmens detalės", Response = typeof(List<JARDetails>), Code = "JAR_GetInfo",
+					Params = [
+						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
+					]
+				})
+				.Map(new("/api/g9/jar/{id}",Jar.InfoSet, Method.Post){
+					Description = "G9 juridinio asmens detalių keitimas", Response = typeof(JARDtlSet), Code = "JAR_SetInfo",
 					Params = [
 						new("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					]
@@ -143,8 +157,12 @@ public class G9API {
 						new("id") { Description="Įrašo id", Type=RouteParamType.Integer, Required=true }
 					]
 				}),
+			new RouteGroup("Klasifikatoriai")
+				.Map(new("/api/g9/lookup",Lookup.List){
+					Description = "Pilnas G9 klasifikatorių sąrašas", Response = typeof(LookupResponse), Code = "Klas_List"
+				}),
 			new RouteGroup("Vartotojai")
-				.Map(new("/api/g9/users",Users.List){ 
+				.Map(new("/api/g9/users",Users.List){
 					Description = "Vartotojų sąrašas", Response = typeof(List<User>), Code = "Usr_List",
 					Params = [
 						new ("apg") { Description="Apygardos id", Type=RouteParamType.Integer },

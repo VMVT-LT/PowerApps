@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Npgsql;
 using PowerApps.Modules.G9.Models;
 using PowerApps.Shared;
 using Vmvt.Npgsql;
@@ -7,7 +6,7 @@ using Vmvt.RouteAPI;
 
 namespace PowerApps.Modules.G9.Methods;
 
-/// <summary>Deklaracijos duomenų metodai</summary>
+/// <summary>Vartotojų duomenų metodai</summary>
 public static class Users {
 	private static HttpClient HClient { get; } = new() { BaseAddress = new(G9API.Cfg.Base) };
 

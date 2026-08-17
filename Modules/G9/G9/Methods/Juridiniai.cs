@@ -28,16 +28,12 @@ public static class Jar {
 
 
 	/// <summary>G9 Juridinio asmens detalės</summary>
-	/// <param name="ctx"></param><returns></returns>
-	public static async Task Info(HttpContext ctx) {
+	/// <param name="id">Juridinio asmens kodas</param><param name="ctx"></param><returns></returns>
+	public static async Task Info(HttpContext ctx, int id) {
 		if (ctx.CheckApi()) {
-			var id = ctx.ParamLongN("id");
-			if (id is not null) {
-				var ret = await JarInfo(id.Value);
-				if (ret is not null) await ctx.Response.WriteAsJsonAsync(ret);
-				else await ctx.Response.E404();
-			}
-			else await ctx.Response.E400("Nenurodytas įrašo ID");
+			var ret = await JarInfo(id);
+			if (ret is not null) await ctx.Response.WriteAsJsonAsync(ret);
+			else await ctx.Response.E404();
 		}
 		else await ctx.Response.E401();
 	}
@@ -53,16 +49,14 @@ public static class Jar {
 
 
 	/// <summary>G9 Juridinio asmens detalių keitimas</summary>
-	/// <param name="ctx"></param><returns></returns>
-	public static async Task InfoSet(HttpContext ctx, JARDtlSet dt) {
+	/// <param name="id">Juridinio asmens kodas</param><param name="dt">Juridinio asmens papildoma informacija</param><param name="ctx"></param><returns></returns>
+	public static async Task InfoSet(HttpContext ctx, int id, JARDtlSet dt) {
 		if (ctx.CheckApi()) {
-			var id = ctx.ParamLongN("id");
 			var usr = ctx.ParamStringN("u");
 			//TODO: validate user
 			if (usr is not null) {
-				if (id is not null) {
 					if (dt is not null) {
-						var ja = await GetJar(id.Value);
+						var ja = await GetJar(id);
 						if (ja is null) { await ctx.Response.E400("Nerastas juridinis asmuo"); return; }
 						if (ja.Statusas == "Teisinis statusas neįregistruotas") ja.Statusas = null;
 						var aob = dt.Aob ?? ja.AobKodas ?? 0;
@@ -77,13 +71,11 @@ public static class Jar {
 						await Conn.G9!.Execute(sql, ("@id", id), ("@pavad", ja.Pavad), ("@tipas", ja.Forma), ("@status", ja.Statusas), ("@jaob", ja.AobKodas), ("@vardas", dt.Kontaktas?.Vardas), ("@pavard", dt.Kontaktas?.Pavarde),
 							("@email", dt.Kontaktas?.Email), ("@phone", dt.Kontaktas?.Phone), ("@aob", dt.Aob), ("@adr", adpav), ("@apg", adr.Apg?.ID), ("@sav", adr.Sav?.ID));
 
-						var ret = await JarInfo(id.Value);
+						var ret = await JarInfo(id);
 						if (ret is not null) await ctx.Response.WriteAsJsonAsync(ret);
 						else await ctx.Response.E404();
 					}
 					else await ctx.Response.E400("Netinkama užklausa");
-				}
-				else await ctx.Response.E400("Nenurodytas įrašo ID");
 			}
 			else await ctx.Response.E400("Neatpažintas vartotojas");
 		}
