@@ -28,7 +28,7 @@ public class LookupResponse {
 	/// <summary>Vietos tipo reikšmių sąrašas.</summary>
 	public List<LookupIntItem>? VietosTipas { get; set; }
 	/// <summary>Viršijimo priežasčių reikšmių sąrašas.</summary>
-	public List<LookupIntItem>? Virspriezastis { get; set; }
+	public List<LookupIntItem>? VirsPriezastis { get; set; }
 	/// <summary>Viršijimo taisomųjų veiksmų reikšmių sąrašas.</summary>
 	public List<LookupStrItem>? VirsTaisomasisVeiksmas { get; set; }
 }
