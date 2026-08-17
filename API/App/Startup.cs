@@ -76,6 +76,18 @@ public static class Startup {
 		app.UseExceptionHandler(exh => exh.Run(HandleError));
 		app.UseRouteEndpoints(Endpoints);
 
+#if DEBUG
+		app.Use(async (ctx, next) => {
+			var origin = ctx.Request.Headers.Origin.ToString();
+			if (!string.IsNullOrEmpty(origin) && (origin.StartsWith("http://localhost"))) {
+				ctx.Response.Headers.Append("Access-Control-Allow-Origin", origin);
+				ctx.Response.Headers.Append("Access-Control-Allow-Headers", "*");
+				ctx.Response.Headers.Append("Access-Control-Allow-Methods", "*");
+			}
+			if (HttpMethods.IsOptions(ctx.Request.Method)) { ctx.Response.StatusCode = StatusCodes.Status204NoContent; return; }
+			await next();
+		});
+#endif
 		return app;
 	}
 

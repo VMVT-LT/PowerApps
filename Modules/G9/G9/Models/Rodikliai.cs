@@ -32,7 +32,9 @@ public class Rodiklis {
 
 
 /// <summary>Rodiklio informacijos keitimas</summary>
-public class RodDtlSet {
+public class RodDtlSet { 
+	/// <summary>Rodiklio kodas.</summary>
+	public string? Kodas { get; set; }
 	/// <summary>Rodiklio grupė.</summary>
 	public int Grupe { get; set; }
 	/// <summary>Rodiklio pavadinimas.</summary>

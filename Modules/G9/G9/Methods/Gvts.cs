@@ -52,19 +52,21 @@ public static class Gvts {
 	/// <param name="id">GVTS ID</param><param name="ctx"></param><returns></returns>
 	public static async Task Info(HttpContext ctx, int id) {
 		if (ctx.CheckApi()) {
-			using var db = new DBRead("SELECT * FROM g9.v_api_gvts WHERE id=@id;", Conn.G9, ("@id", id));
-			var gvts = await db.GetObject<GvtsListItem>();
-
-			if (gvts is not null) {
-				var ret = new GvtsItem() {
-					ID = gvts.ID, Active = gvts.Active, Adresas = gvts.Adresas, GVTOT = gvts.GVTOT, Pavad = gvts.Pavad, Pakeista = gvts.Pakeista,
-					JA = await Jar.JarInfo(gvts.JA ?? 0)
-				};
-				var db2 = new DBRead("SELECT * FROM g9.v_api_users u WHERE EXISTS (SELECT * FROM g9.gvts g LEFT JOIN g9.gvts_insp i ON (g.id=i.vkl_id) WHERE g.vkl_id=@id and i.vkl_insp=u.id)", Conn.G9, ("@id", id));
-				ret.Inspektoriai = await db2.GetList<User>();
-				await ctx.Response.WriteAsJsonAsync(ret);
+			if (id > 0) {
+				using var db = new DBRead("SELECT * FROM g9.v_api_gvts WHERE id=@id;", Conn.G9, ("@id", id));
+				var gvts = await db.GetObject<GvtsListItem>();
+				if (gvts is not null) {
+					var ret = new GvtsItem() {
+						ID = gvts.ID, Active = gvts.Active, Adresas = gvts.Adresas, GVTOT = gvts.GVTOT, Pavad = gvts.Pavad, Pakeista = gvts.Pakeista,
+						JA = await Jar.JarInfo(gvts.JA ?? 0)
+					};
+					var db2 = new DBRead("SELECT * FROM g9.v_api_users u WHERE EXISTS (SELECT * FROM g9.gvts g LEFT JOIN g9.gvts_insp i ON (g.id=i.vkl_id) WHERE g.vkl_id=@id and i.vkl_insp=u.id)", Conn.G9, ("@id", id));
+					ret.Inspektoriai = await db2.GetList<User>();
+					await ctx.Response.WriteAsJsonAsync(ret);
+				}
+				else await ctx.Response.E404();
 			}
-			else await ctx.Response.E404();
+			else await ctx.Response.E400("Neteisingas ID");
 		}
 		else await ctx.Response.E401();
 	}
@@ -74,41 +76,44 @@ public static class Gvts {
 	/// <param name="id">Rodiklio ID</param><param name="ctx"></param><param name="dt"></param><returns></returns>
 	public static async Task InfoSet(HttpContext ctx, int id, GvtsDtlSet dt) {
 		if (ctx.CheckApi()) {
-			if (dt.JA < 100000) await ctx.Response.E400("Nenurodytas juridinis asmuo");
-			else if (dt.Adresas < 10000) await ctx.Response.E400("Nenurodytas adresas");
-			else if ((dt.Pavad?.Length ?? 0) < 3) await ctx.Response.E400("Nenurodytas pavadinimas");
-			else if ((dt.GVTOT?.Length ?? 0) < 10) await ctx.Response.E400("Nenurodytas teritorijos kodas");
-			else if (!dt.GVTOT!.StartsWith("LT0")) await ctx.Response.E400("Neteisingas teritorijos kodas");
-			else {
-				var adr = await Adr.GetAdr(dt.Adresas);
-
-				if (adr is null || adr.Adm is null || adr.Sav is null) await ctx.Response.E400("Neteisingas adresas");
+			if (id > 0) {
+				if (dt.JA < 100000) await ctx.Response.E400("Nenurodytas juridinis asmuo");
+				else if (dt.Adresas < 10000) await ctx.Response.E400("Nenurodytas adresas");
+				else if ((dt.Pavad?.Length ?? 0) < 3) await ctx.Response.E400("Nenurodytas pavadinimas");
+				else if ((dt.GVTOT?.Length ?? 0) < 10) await ctx.Response.E400("Nenurodytas teritorijos kodas");
+				else if (!dt.GVTOT!.StartsWith("LT0")) await ctx.Response.E400("Neteisingas teritorijos kodas");
 				else {
-					var pref = $"LT0{(adr.Adm.ID == 10 ? "11" : "2" + adr.Adm.ID)}{adr.Sav.ID}";
+					var adr = await Adr.GetAdr(dt.Adresas);
 
-					if (!dt.GVTOT.StartsWith(pref)) await ctx.Response.E400("Neteisingas GVTOT kodas");
+					if (adr is null || adr.Adm is null || adr.Sav is null) await ctx.Response.E400("Neteisingas adresas");
 					else {
-						var ja = await Jar.GetJar(dt.JA);
-						if (ja is null) await ctx.Response.E400("Juridinis asmuo nerastas");
-						else if (ja.StatusKodas == 10) await ctx.Response.E400("Juridinis asmuo išregistruotas");
+						var pref = $"LT0{(adr.Adm.ID == 10 ? "11" : "2" + adr.Adm.ID)}{adr.Sav.ID}";
+
+						if (!dt.GVTOT.StartsWith(pref)) await ctx.Response.E400("Neteisingas GVTOT kodas");
 						else {
+							var ja = await Jar.GetJar(dt.JA);
+							if (ja is null) await ctx.Response.E400("Juridinis asmuo nerastas");
+							else if (ja.StatusKodas == 10) await ctx.Response.E400("Juridinis asmuo išregistruotas");
+							else {
 
-							using var db = new DBRead("SELECT * FROM g9.v_api_gvts WHERE id=@id;", Conn.G9, ("@id", id));
-							var ret = await db.GetObject<GvtsListItem>();
+								using var db = new DBRead("SELECT * FROM g9.v_api_gvts WHERE id=@id;", Conn.G9, ("@id", id));
+								var ret = await db.GetObject<GvtsListItem>();
 
-							var param = new (string key, object? val)[] { ("@id", id), ("@title", dt.Pavad), ("@ja", dt.JA), ("@gvtot", dt.GVTOT), ("@aob", dt.Adresas), ("@apg", adr.Apg?.ID), ("@sav", adr.Sav.ID), ("@saviv", adr.Sav.Vardas), ("@adr", $"{adr.Pavad}, {adr.Vietove}"), ("@act", dt.Active) };
+								var param = new (string key, object? val)[] { ("@id", id), ("@title", dt.Pavad), ("@ja", dt.JA), ("@gvtot", dt.GVTOT), ("@aob", dt.Adresas), ("@apg", adr.Apg?.ID), ("@sav", adr.Sav.ID), ("@saviv", adr.Sav.Vardas), ("@adr", $"{adr.Pavad}, {adr.Vietove}"), ("@act", dt.Active) };
 
-							var sql = ret is null ?
-								"INSERT INTO g9.gvts(vkl_id,vkl_ja,vkl_title,vkl_saviv,vkl_adresas,vkl_gvtot,vkl_active,vkl_adr_aob,vkl_adr_sav,vkl_date,vkl_adr_apg) VALUES (@id, @ja, @title, @saviv, @adr, @gvtot, @act, @aob, @sav, timezone('utc',now()), @apg);" :
-								"UPDATE g9.gvts SET vkl_ja=@ja, vkl_title=@title, vkl_saviv=@saviv, vkl_adresas=@adr, vkl_gvtot=@gvtot, vkl_active=@act, vkl_adr_aob=@aob, vkl_adr_sav=@sav, vkl_date=timezone('utc',now()), vkl_adr_apg=@apg WHERE vkl_id=@id;";
+								var sql = ret is null ?
+									"INSERT INTO g9.gvts(vkl_id,vkl_ja,vkl_title,vkl_saviv,vkl_adresas,vkl_gvtot,vkl_active,vkl_adr_aob,vkl_adr_sav,vkl_date,vkl_adr_apg) VALUES (@id, @ja, @title, @saviv, @adr, @gvtot, @act, @aob, @sav, timezone('utc',now()), @apg);" :
+									"UPDATE g9.gvts SET vkl_ja=@ja, vkl_title=@title, vkl_saviv=@saviv, vkl_adresas=@adr, vkl_gvtot=@gvtot, vkl_active=@act, vkl_adr_aob=@aob, vkl_adr_sav=@sav, vkl_date=timezone('utc',now()), vkl_adr_apg=@apg WHERE vkl_id=@id;";
 
-							await Conn.G9!.Execute(sql + " SELECT g9.sync_ja_detales();", param);
-							if (dt.Active) await Jar.UpdateJar(dt.JA);
-							await Info(ctx, id);
+								await Conn.G9!.Execute(sql + " SELECT g9.sync_ja_detales();", param);
+								if (dt.Active) await Jar.UpdateJar(dt.JA);
+								await Info(ctx, id);
+							}
 						}
 					}
 				}
 			}
+			else await ctx.Response.E400("Neteisingas ID");
 		}
 		else await ctx.Response.E401();
 	}

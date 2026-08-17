@@ -58,9 +58,8 @@ public class G9API {
 					], Errors=[400]
 				})
 				.Map(new("/api/g9/rodikliai/{id}",Rodikliai.SetInfo, Method.Post){
-					Description = "Keisti rodiklio informaciją", Response=typeof(Rodiklis), Code = "Rod_SetInfo",
+					Description = "Keisti rodiklio informaciją<br>Kurti naują: id=0", Response=typeof(Rodiklis), Code = "Rod_SetInfo",
 					Params = [
-						new ("id") { Description="Rodiklio id", Type=RouteParamType.Integer },
 						new ("X-API-Key") { Description = "Prieigos raktas", Type=RouteParamType.String, Location=RouteParamLoc.Header, Required=true },
 					], Errors=[400]
 				}),
