@@ -1,8 +1,6 @@
 ﻿namespace PowerApps.Modules.G9.Models;
 
 
-using System.Text.Json.Serialization;
-
 /// <summary>Klasifikatorių sąrašas</summary>
 public class LookupResponse {
 	/// <summary>Daznumo reikšmių sąrašas.</summary>
@@ -50,7 +48,7 @@ public class LookupIntItem {
 
 /// <summary>Daznumo laiko reikšmė.</summary>
 public class LkpDaznLaikItem : LookupIntItem {
-	/// <summary>Papildomas skaitmeninis laukas (num).</summary>
+	/// <summary>Papildomas skaitinis laukas (num).</summary>
 	public int? Num { get; set; }
 }
 
